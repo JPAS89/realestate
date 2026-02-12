@@ -1,0 +1,73 @@
+[
+    {
+      "id": 1,
+      "tour": "Caño Negro Jungle Cruise",
+      "shortDesc":"Explore Caño Negro on a serene riverboat tour through Rio Frío, spotting birds, caimans, turtles, and monkeys in one of Costa Rica’s most important wetlands—perfect for nature and wildlife lovers seeking a true immersion in biodiversity.",
+      "description": "The Caño Negro tour takes you to explore one of Costa Rica’s most important wetlands, located near the border with Nicaragua. This tour is conducted by boat along the Río Frío, allowing visitors to observe a wide variety of wildlife, such as migratory birds, caimans, turtles, monkeys, and more. Guided by expert naturalists, this experience is ideal for nature lovers and bird watchers. The tranquility of the boat ride, combined with the impressive views of the fauna and landscape, makes Caño Negro a unique and special destination to connect with Costa Rica’s biodiversity.",
+      "regulartour": 140,
+      "privatetour": 230,
+      "minage": "All public",
+      "tourincludes": "Transportation | Tour guide | Entrance fee | Water | Fruits | Lunch | Pantun boat",
+      "duration": 7,
+      "schedule": "8:00 AM",
+      "image": "/CanoNegro.jpg",
+      "active": true
+    },
+    {
+      "id": 2,
+      "tour": "Peñas Blancas Eco Flow",
+      "shortDesc":"Float peacefully along the Peñas Blancas River and observe Costa Rica’s wildlife on a guided eco river tour.",
+      "description": "Located just 30 minutes from La Fortuna, the Peñas Blancas Eco Flow is a calm and scenic river float ideal for families and nature lovers. Guests travel down a tropical river in specialized inflatable rafts, guided by experienced professionals who ensure safety throughout the journey. Over approximately 2.5 hours, participants can observe birds, reptiles, monkeys, and other wildlife while learning about the local ecosystem and conservation efforts.",
+      "regulartour": 100,
+      "privatetour": 130,
+      "minage": "+5 years old",
+      "tourincludes": "Transportation | Tour guide | Entrance fee | Water | Fruits | Lunch | Specialized Equipment.",
+      "duration": 4,
+      "schedule": "8:00 AM | 2:00 PM",
+      "image": "/PenasBlancas.jpg",
+      "active": true
+    },
+    {
+      "id": 3,
+      "tour": "Arenal Kayak Adventure",
+      "shortDesc":"Glide across Arenal Lake by kayak and take in volcano scenery up close—an active nature adventure perfect for those who want to move and explore.",
+      "description": "The kayaking tour in La Fortuna takes you to explore Arenal Lake or nearby rivers by kayak, surrounded by the impressive view of the Arenal Volcano. It is a tranquil yet adventurous experience, ideal for those who enjoy nature and sports. Along the route, you can observe birds, monkeys, and other local wildlife as you paddle through calm waters. No prior experience is required, as guides provide safety and technique instructions before starting. It is perfect for families, couples, and adventurers seeking a close connection with nature. ",
+      "regulartour": 100,
+      "privatetour": 130,
+      "minage": "+5 years old",
+      "tourincludes": "Transportation | Tour guide | Entrance fee | Water | Fruits | Lunch | Specialized Equipment.",
+      "duration": 4,
+      "schedule": "8:00 AM | 2:00 PM",
+      "image": "/Kayak.webp",
+      "active": true
+    },
+    {
+      "id": 4,
+      "tour": "Arenal Whitewater Challenge",
+      "shortDesc":"Conquer tropical rapids on an exciting whitewater rafting tour near Arenal, suitable for beginners and experienced rafters.",
+      "description": "The Arenal Whitewater Challenge offers an exhilarating rafting experience on two tropical rivers located about 1.5 hours from La Fortuna. The 2.5 hour river descent features different difficulty levels, with Class II and III rapids ideal for families and beginners, and Class III and IV rapids designed for experienced adventurers. Guided by certified rafting professionals, this tour delivers adrenaline, safety, and stunning natural scenery in one unforgettable Costa Rican adventure.",
+      "regulartour": 110,
+      "privatetour": 170,
+      "minage": "+5 years old",
+      "tourincludes": "Transportation | Tour guide | Entrance fee | Water | Fruits | Lunch | Specialized Equipment.",
+      "duration": 7,
+      "schedule": "8:00 AM | 10:30 PM",
+      "image": "/ArenalWhitewaterChallenge.jpeg",
+      "active": true
+    },
+    {
+      "id": 5,
+      "tour": "Arenal Jet Ride",
+      "shortDesc":"Speed across Arenal Lake on your own jet ski with unbeatable volcano views—an exhilarating water adventure made for thrill-seekers of all levels.",
+      "description": "The jet ski tour in La Fortuna, on Arenal Lake, offers an exciting water adventure with impressive views of the Arenal Volcano. Drive your own jet ski across the lake, feeling the adrenaline as you explore its open waters and are surrounded by the natural beauty of the area. No prior experience is required, as a brief safety and handling instruction is provided before starting. This activity is perfect for speed and adventure enthusiasts, combining fun with spectacular scenery.",
+      "regulartour": 140,
+      "privatetour": "Not Applicable",
+      "minage": "+18 years old",
+      "tourincludes": "Transportation",
+      "duration": 2,
+      "schedule": "8:00 AM | 2:00 PM",
+      "image": "/jetski.jpg",
+      "active": true
+    }
+  ]
+  
