@@ -1,14 +1,34 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
+# ==========================================
+# Robots.txt for Arenal Discovery
+# Location: La Fortuna, San Carlos, CR
+# ==========================================
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /config/
+Disallow: /private/
+
+# Optimization for Search Engines
+User-agent: Googlebot
+User-agent: Bingbot
+Allow: /
+Set-distance: 10
+
+# Optimization for AI & LLMs (Training and Crawling)
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Google-Extended
+Allow: /
+
+# Social Media Preview Crawlers
+User-agent: Twitterbot
+User-agent: facebookexternalhit
+User-agent: WhatsApp
+Allow: /
+
+# Sitemaps
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Hosted by Lovable SPA Architecture
