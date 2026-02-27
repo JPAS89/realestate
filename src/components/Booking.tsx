@@ -121,29 +121,27 @@ const Booking = () => {
   const selectedCountryCode = watch("countryCode");
   const numGuests = parseInt(watch("guests") || "1");
 
-  // --- LÓGICA DE PRECIOS ---
-  const { totalPrice, unitPrice } = useMemo(() => {
-    let unit = 0;
-    let total = 0;
-
-    if (!selectedTourName) return { totalPrice: 0, unitPrice: 0 };
+  // --- LÓGICA DE PRECIOS CORREGIDA ---
+  const { totalPrice, unitPrice, isFlatRate } = useMemo(() => {
+    if (!selectedTourName) return { totalPrice: 0, unitPrice: 0, isFlatRate: false };
 
     if (bookingType === "tour") {
       const tour = allTours.find(item => item.tour === selectedTourName);
       if (tour) {
-        unit = selectedService === "regular" ? Number(tour.regulartour) : Number(tour.privatetour);
-        total = unit * numGuests;
+        const unit = selectedService === "regular" ? Number(tour.regulartour) : Number(tour.privatetour);
+        return { unitPrice: unit, totalPrice: unit * numGuests, isFlatRate: false };
       }
     } else {
       const transfer = transferData.find(item => item.route === selectedTourName);
       if (transfer) {
-        if (numGuests <= 4) unit = transfer.prices["1_4"];
-        else if (numGuests <= 9) unit = transfer.prices["5_9"];
-        else unit = transfer.prices["9_15"];
-        total = unit * numGuests;
+        let flatPrice = 0;
+        if (numGuests <= 4) flatPrice = transfer.prices["1_4"];
+        else if (numGuests <= 9) flatPrice = transfer.prices["5_9"];
+        else flatPrice = transfer.prices["9_15"];
+        return { unitPrice: flatPrice, totalPrice: flatPrice, isFlatRate: true };
       }
     }
-    return { totalPrice: total, unitPrice: unit };
+    return { totalPrice: 0, unitPrice: 0, isFlatRate: false };
   }, [bookingType, selectedTourName, selectedService, numGuests, allTours]);
 
   const availableTimes = useMemo(() => {
@@ -152,10 +150,9 @@ const Booking = () => {
     return tour?.schedule ? tour.schedule.split(" | ").map(time => time.trim()) : [];
   }, [bookingType, selectedTourName, allTours]);
 
-  // FUNCIÓN DE LIMPIEZA AL CAMBIAR MODO
   const handleTypeChange = (type: "tour" | "transfer") => {
     setValue("bookingType", type);
-    setValue("tour", ""); // Resetea el valor en el estado de react-hook-form
+    setValue("tour", ""); 
     setValue("tourTime", type === "transfer" ? "Flexible Transfer Time" : "");
     setValue("serviceType", type === "transfer" ? "private" : "regular");
     setValue("guests", "1");
@@ -227,7 +224,6 @@ const Booking = () => {
           <CardContent className="pt-8 space-y-6">
             <form onSubmit={handleSubmit(onPreSubmit)} className="space-y-6">
               
-              {/* SELECTOR DE MODO */}
               <div className="space-y-2">
                 <Label className="text-primary font-bold">What are you booking? *</Label>
                 <div className="grid grid-cols-2 gap-4">
@@ -240,7 +236,6 @@ const Booking = () => {
                 </div>
               </div>
 
-              {/* DATOS PERSONALES */}
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-2">
                   <Label>Full Name *</Label>
@@ -269,15 +264,11 @@ const Booking = () => {
                 </div>
               </div>
 
-              {/* SELECCIÓN DE ACTIVIDAD/RUTA - CON KEY PARA RESET VISUAL */}
-              <div 
-                key={bookingType} 
-                className={bookingType === "tour" ? "grid md:grid-cols-2 gap-4" : "block"}
-              >
+              <div key={bookingType} className={bookingType === "tour" ? "grid md:grid-cols-2 gap-4" : "block"}>
                 <div className="space-y-2">
                   <Label>{bookingType === "tour" ? "Activity *" : "Route *"}</Label>
                   <Select 
-                    value={watch("tour")} // Controlado por el estado
+                    value={watch("tour")} 
                     onValueChange={(v) => { 
                       setValue("tour", v); 
                       if(bookingType === "tour") setValue("tourTime", ""); 
@@ -308,7 +299,6 @@ const Booking = () => {
                 )}
               </div>
 
-              {/* LOGÍSTICA */}
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-2">
                   <Label>{bookingType === "tour" ? "Meeting Place *" : "Pickup Location *"}</Label>
@@ -341,7 +331,6 @@ const Booking = () => {
                 </div>
               </div>
 
-              {/* TARJETA DE PRECIO FINAL */}
               {totalPrice > 0 && (
                 <div className="bg-primary/5 p-6 rounded-xl border-2 border-primary/20 flex flex-col md:flex-row justify-between items-center gap-4">
                   <div>
@@ -351,7 +340,11 @@ const Booking = () => {
                         <span className="text-4xl font-black text-primary">${totalPrice}</span>
                         <span className="text-sm font-medium text-muted-foreground italic">Total</span>
                       </div>
-                      <p className="text-sm text-primary/80 font-semibold italic">(${unitPrice} per person x {numGuests} pax)</p>
+                      <p className="text-sm text-primary/80 font-semibold italic">
+                        {isFlatRate 
+                          ? `(Flat rate for up to ${numGuests <= 4 ? '4' : numGuests <= 9 ? '9' : '15'} pax)` 
+                          : `($${unitPrice} per person x ${numGuests} pax)`}
+                      </p>
                     </div>
                   </div>
                   
@@ -360,19 +353,21 @@ const Booking = () => {
                       <Label className="mb-1 block text-[10px] font-bold uppercase text-primary">Guests</Label>
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-primary" />
-                        <Input type="number" min="1" className="w-16 text-center font-bold border-none h-8 text-lg focus-visible:ring-0" {...register("guests")} />
+                        <Input type="number" min="1" max="15" className="w-16 text-center font-bold border-none h-8 text-lg focus-visible:ring-0" {...register("guests")} />
                       </div>
                     </div>
                   )}
                 </div>
               )}
-                <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-lg flex gap-3 items-start">
-                  <Info className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                      <div className="text-sm text-red-800 leading-relaxed">
-                           <span className="font-bold">Important:</span> This is a pre-booking request. Once submitted, our team will verify availability and contact you within
-                            <span className="font-bold"> 12 hours</span> via email or WhatsApp to finalize your reservation.
-                      </div>
-                  </div>
+
+              <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-lg flex gap-3 items-start">
+                <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-blue-800 leading-relaxed">
+                  <span className="font-bold">Important:</span> This is a pre-booking request. Once submitted, our team will verify availability and contact you within
+                  <span className="font-bold"> 12 hours</span> via email or WhatsApp to finalize your reservation.
+                </div>
+              </div>
+
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90 font-poppins text-xl py-8 shadow-xl">Send Booking Request</Button>
               <div className="text-center pt-2"><PolicyTermsDialog /></div>
             </form>
@@ -380,7 +375,6 @@ const Booking = () => {
         </Card>
       </div>
       
-      {/* MODAL DE CONFIRMACIÓN */}
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
         <AlertDialogContent className="max-w-md rounded-3xl">
           <AlertDialogHeader>
@@ -399,7 +393,7 @@ const Booking = () => {
               <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
                 <p className="font-bold text-primary mb-2 uppercase text-[10px] tracking-widest">Order Summary</p>
                 <p><strong>{tempData.bookingType === "tour" ? "Activity:" : "Route:"}</strong> {tempData.tour}</p>
-                <p><strong>Date:</strong> {tempData.date} ({tempData.tourTime})</p>
+                <p><strong>Date:</strong> {tempData.date} {tempData.bookingType === "tour" ? `(${tempData.tourTime})` : ""}</p>
                 <p><strong>Pickup:</strong> {tempData.pickupTime} - {tempData.meetingPlace}</p>
                 <div className="mt-2 pt-2 border-t border-primary/20 flex justify-between items-center">
                   <span className="font-bold text-primary">Total for {tempData.guests} Pax:</span>
