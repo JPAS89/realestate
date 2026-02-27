@@ -362,7 +362,7 @@ const Booking = () => {
 
               <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-lg flex gap-3 items-start">
                 <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-blue-800 leading-relaxed">
+                <div className="text-sm text-red-800 leading-relaxed">
                   <span className="font-bold">Important:</span> This is a pre-booking request. Once submitted, our team will verify availability and contact you within
                   <span className="font-bold"> 12 hours</span> via email or WhatsApp to finalize your reservation.
                 </div>
