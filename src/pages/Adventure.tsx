@@ -11,6 +11,7 @@ import adventureTours from "@/data/adventure.json"; // <-- usar alias @
 import adventureVideo from "@/assets/adventure.mp4"
 type AdventureTour = {
   id: string | number;
+  slug: string;
   tour: string;
   shortDesc?: string;
   description?: string;
@@ -139,7 +140,7 @@ const Adventure = () => {
               const imageSrc = tour.image && tour.image.length > 0 ? tour.image : mapPlaceholder;
 
               return (
-                <Link key={id} to={`/tours/adventure/${id}`}>
+                <Link key={id} to={`/tours/adventure/${tour.slug}`}>
                   <Card
                     className="overflow-hidden hover:shadow-elegant transition-all duration-300 transform hover:-translate-y-2 border-border cursor-pointer h-full"
                   >

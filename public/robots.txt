@@ -29,6 +29,6 @@ User-agent: WhatsApp
 Allow: /
 
 # Sitemaps
-Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://arenaldiscovery.com/sitemap.xml
 
 # Hosted by Lovable SPA Architecture

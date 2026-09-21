@@ -12,6 +12,7 @@ import aquaticVideo from "@/assets/acuaticv.mp4";
 
 type AquaticTour = {
   id: string | number;
+  slug: string;
   tour: string;
   shortDesc?: string;
   description?: string;
@@ -139,7 +140,7 @@ const Acuatic = () => {
               const imageSrc = tour.image && tour.image.length > 0 ? tour.image : mapPlaceholder;
 
               return (
-                <Link key={id} to={`/tours/acuatic/${id}`}>
+                <Link key={id} to={`/tours/acuatic/${tour.slug}`}>
                   <Card
                     className="overflow-hidden hover:shadow-elegant transition-all duration-300 transform hover:-translate-y-2 border-border cursor-pointer h-full"
                   >

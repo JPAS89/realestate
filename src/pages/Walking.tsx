@@ -11,6 +11,7 @@ import walkingTours from "@/data/hiking.json"; // <-- usar alias @
 import hikingVideo from "@/assets/hiking.mp4"
 type WalkingTour = {
   id: string | number;
+  slug: string;
   tour: string;
   shortDesc?: string;
   description?: string;
@@ -140,7 +141,7 @@ const Walking = () => {
               const imageSrc = tour.image && tour.image.length > 0 ? tour.image : mapPlaceholder;
 
               return (
-                <Link key={id} to={`/tours/walking/${id}`}>
+                <Link key={id} to={`/tours/walking/${tour.slug}`}>
                   <Card
                     className="overflow-hidden hover:shadow-elegant transition-all duration-300 transform hover:-translate-y-2 border-border cursor-pointer h-full"
                   >

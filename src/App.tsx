@@ -27,7 +27,7 @@ const App = () => (
                 <Route element={<AppLayout />}>
                 <Route path="/" element={<Index />} />
                
-                <Route path="/tours/:category/:tourId" element={<TourDetailPage />} />
+                <Route path="/tours/:category/:tourSlug" element={<TourDetailPage />} />
                 <Route path="/transport" element={<Transport />} />
                 <Route path="/tours/acuatic" element={<Acuatic />} />
                 <Route path="/tours/adventure" element={<Adventure />} />

@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, Navigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import adventureTours from "@/data/adventure.json";
 import walkingTours from "@/data/hiking.json";
 
 const TourDetailPage = () => {
-  const { category, tourId } = useParams();
+  const { category, tourSlug } = useParams();
   const navigate = useNavigate();
   const { language } = useLanguage();
   const t = getTranslation(language);
@@ -27,7 +27,14 @@ const TourDetailPage = () => {
   };
 
   const selectedCategoryTours = category ? categoryData[category] : [];
-  const tour = selectedCategoryTours?.find((item) => String(item.id) === tourId);
+  const tourBySlug = selectedCategoryTours?.find((item) => item.slug === tourSlug);
+  const tourById = selectedCategoryTours?.find((item) => String(item.id) === tourSlug);
+
+  if (!tourBySlug && tourById?.slug && category) {
+    return <Navigate to={`/tours/${category}/${tourById.slug}`} replace />;
+  }
+
+  const tour = tourBySlug;
 
   if (!tour) {
     return (
