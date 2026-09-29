@@ -11,6 +11,13 @@ const mapPlaceholder =
   "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=800";
 
 import TRANSFER_DATA from "@/data/transfers.json";
+import SeoHead from "@/components/SeoHead";
+import { TRANSPORT_SEO, buildTransportJsonLd } from "@/lib/seo";
+
+const priceRows = (prices: Record<string, number>) =>
+  Object.entries(prices).sort(
+    ([a], [b]) => Number.parseInt(a, 10) - Number.parseInt(b, 10)
+  );
 
 const Transport: React.FC = () => {
   const { language } = useLanguage();
@@ -19,37 +26,30 @@ const Transport: React.FC = () => {
   const shortConnections = TRANSFER_DATA.filter(item => item.type === "Local");
   const longConnections = TRANSFER_DATA.filter(item => item.type === "Connection");
 
-  const PriceTable = ({ prices }: { prices: any }) => (
+  const PriceTable = ({ prices }: { prices: Record<string, number> }) => (
     <div className="mt-4 bg-[#d4ded7] rounded-xl p-4 border border-border/60 shadow-inner">
       <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground border-b pb-2 mb-2 tracking-widest">
         <span>Passengers</span>
         <span>Total Price</span>
       </div>
       <div className="space-y-2">
-        <div className="flex justify-between items-center text-sm">
-          <span className="flex items-center gap-2 text-foreground/80">
-            <Users className="w-3.5 h-3.5 text-[#617065]" /> 1 - 4
-          </span>
-          <span className="font-bold text-[#617065]">${prices["1_4"]}</span>
-        </div>
-        <div className="flex justify-between items-center text-sm">
-          <span className="flex items-center gap-2 text-foreground/80">
-            <Users className="w-3.5 h-3.5 text-[#617065]" /> 5 - 9
-          </span>
-          <span className="font-bold text-[#617065]">${prices["5_9"]}</span>
-        </div>
-        <div className="flex justify-between items-center text-sm">
-          <span className="flex items-center gap-2 text-foreground/80">
-            <Users className="w-3.5 h-3.5 text-[#617065]" /> 10 - 15
-          </span>
-          <span className="font-bold text-[#617065]">${prices["9_15"]}</span>
-        </div>
+        {priceRows(prices).map(([range, price]) => (
+          <div key={range} className="flex justify-between items-center text-sm">
+            <span className="flex items-center gap-2 text-foreground/80">
+              <Users className="w-3.5 h-3.5 text-[#617065]" /> {range.replace("_", " - ")}
+            </span>
+            <span className="font-bold text-[#617065]">${price}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 
+  const jsonLd = buildTransportJsonLd(TRANSFER_DATA);
+
   return (
     <div className="w-full font-poppins text-[#4e5a52]">
+      <SeoHead {...TRANSPORT_SEO} jsonLd={jsonLd} />
       {/* HERO */}
       <section className="relative h-[65vh] overflow-hidden flex items-end">
         <video

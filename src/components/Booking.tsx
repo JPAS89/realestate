@@ -48,6 +48,18 @@ const COUNTRY_CODES = [
 
 import bgimage from "@/assets/tress.png";
 
+const priceForGuestCount = (prices: Record<string, number>, guests: number) => {
+  const brackets = Object.entries(prices)
+    .map(([range, price]) => {
+      const [minRaw, maxRaw] = range.split("_");
+      return { min: Number(minRaw), max: Number(maxRaw), price: Number(price) };
+    })
+    .filter((bracket) => Number.isFinite(bracket.min) && Number.isFinite(bracket.max) && Number.isFinite(bracket.price))
+    .sort((a, b) => a.min - b.min || a.max - b.max);
+
+  return brackets.find((bracket) => guests >= bracket.min && guests <= bracket.max) ?? null;
+};
+
 const convertToMinutes = (timeString: string): number => {
   if (!timeString) return 0;
   const str = timeString.trim().toUpperCase();
@@ -119,29 +131,29 @@ const Booking = () => {
   const selectedTourName = watch("tour");
   const selectedService = watch("serviceType");
   const selectedCountryCode = watch("countryCode");
-  const numGuests = parseInt(watch("guests") || "1");
+  const parsedGuests = parseInt(watch("guests") || "1", 10);
+  const numGuests = Number.isFinite(parsedGuests) ? parsedGuests : 1;
 
-  // --- LÓGICA DE PRECIOS CORREGIDA ---
-  const { totalPrice, unitPrice, isFlatRate } = useMemo(() => {
-    if (!selectedTourName) return { totalPrice: 0, unitPrice: 0, isFlatRate: false };
+  const { totalPrice, unitPrice, isFlatRate, flatRateMax } = useMemo(() => {
+    const empty = { totalPrice: 0, unitPrice: 0, isFlatRate: false, flatRateMax: 0 };
+    if (!selectedTourName) return empty;
 
     if (bookingType === "tour") {
       const tour = allTours.find(item => item.tour === selectedTourName);
       if (tour) {
         const unit = selectedService === "regular" ? Number(tour.regulartour) : Number(tour.privatetour);
-        return { unitPrice: unit, totalPrice: unit * numGuests, isFlatRate: false };
+        if (!Number.isFinite(unit)) return empty;
+        return { unitPrice: unit, totalPrice: unit * numGuests, isFlatRate: false, flatRateMax: 0 };
       }
     } else {
       const transfer = transferData.find(item => item.route === selectedTourName);
       if (transfer) {
-        let flatPrice = 0;
-        if (numGuests <= 4) flatPrice = transfer.prices["1_4"];
-        else if (numGuests <= 9) flatPrice = transfer.prices["5_9"];
-        else flatPrice = transfer.prices["9_15"];
-        return { unitPrice: flatPrice, totalPrice: flatPrice, isFlatRate: true };
+        const bracket = priceForGuestCount(transfer.prices, numGuests);
+        if (!bracket) return empty;
+        return { unitPrice: bracket.price, totalPrice: bracket.price, isFlatRate: true, flatRateMax: bracket.max };
       }
     }
-    return { totalPrice: 0, unitPrice: 0, isFlatRate: false };
+    return empty;
   }, [bookingType, selectedTourName, selectedService, numGuests, allTours]);
 
   const availableTimes = useMemo(() => {
@@ -310,14 +322,14 @@ const Booking = () => {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className={bookingType === "tour" ? "grid md:grid-cols-2 gap-4" : "block"}>
                 <div className="space-y-2">
                   <Label>Date *</Label>
                   <Input type="date" {...register("date")} />
                 </div>
-                <div className="space-y-2">
-                  <Label>{bookingType === "tour" ? "Service Type *" : "People *"}</Label>
-                  {bookingType === "tour" ? (
+                {bookingType === "tour" && (
+                  <div className="space-y-2">
+                    <Label>Service Type *</Label>
                     <Select value={watch("serviceType")} onValueChange={(v) => setValue("serviceType", v)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -325,10 +337,8 @@ const Booking = () => {
                         {allTours.find(t => t.tour === selectedTourName)?.privatetour !== "Not Applicable" && <SelectItem value="private">Private Tour</SelectItem>}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    <div className="relative"><Users className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input type="number" min="1" max="15" className="pl-10 font-bold" {...register("guests")} /></div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               {totalPrice > 0 && (
@@ -342,21 +352,19 @@ const Booking = () => {
                       </div>
                       <p className="text-sm text-primary/80 font-semibold italic">
                         {isFlatRate 
-                          ? `(Flat rate for up to ${numGuests <= 4 ? '4' : numGuests <= 9 ? '9' : '15'} pax)` 
+                          ? `(Flat rate for up to ${flatRateMax} pax)` 
                           : `($${unitPrice} per person x ${numGuests} pax)`}
                       </p>
                     </div>
                   </div>
-                  
-                  {bookingType === "tour" && (
-                    <div className="text-right bg-white p-3 rounded-lg shadow-sm border border-primary/10">
-                      <Label className="mb-1 block text-[10px] font-bold uppercase text-primary">Guests</Label>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-primary" />
-                        <Input type="number" min="1" max="15" className="w-16 text-center font-bold border-none h-8 text-lg focus-visible:ring-0" {...register("guests")} />
-                      </div>
+
+                  <div className="text-right bg-white p-3 rounded-lg shadow-sm border border-primary/10">
+                    <Label className="mb-1 block text-[10px] font-bold uppercase text-primary">Guests</Label>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-primary" />
+                      <Input type="number" min="1" max="15" className="w-16 text-center font-bold border-none h-8 text-lg focus-visible:ring-0" {...register("guests")} />
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
 
